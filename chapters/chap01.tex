@@ -1,0 +1,45 @@
+%% This is an example first chapter.  You should put chapter/appendix that you
+%% write into a separate file, and add a line \include{yourfilename} to
+%% main.tex, where `yourfilename.tex' is the name of the chapter/appendix file.
+%% You can process specific files by typing their names in at the 
+%% \files=
+%% prompt when you run the file main.tex through LaTeX.
+\chapter{Introduction}
+The Semantic Web is a network of structured data represented in a format that enables automatic interpretation of its meaning. Data is represented in the form of graphs and its meaning is defined in ontologies - semantic schemas enabling automatic interpretation by deductive logical conclusion. After 2006 the Semantic Web is realized in the form of Linked Open Data - a network of data, published on different servers, but interlinked with hyperlinks (same as the hyperlinks in Web 1.0). Today there are thousands of databases (knowledge bases) published and interlinked in this way, that contain more that a trillion facts in all areas of life. Linked Data is accepted as a standard by the governments of the United States, United Kingdom and other countries for publishing public data - for example statistical information, company registers etc. Amongst the most popular databases are DBPedia (a structured version of Wikipedia) and Geonames (containing most of Earth's geographical information).
+
+Open Linked Data has many purposes. One of them is presenting knowledge as graphs (e.g. Google Knowledge Graph) when analyzing and indexing natural language in a process called "semantic annotation". Text is being analyzed with the purpose of finding mentions of people, companies, places and other concepts - known or unknown. Ontotext offers a solution of this kind called "Dynamic Semantic Publishing (DSP)", which persists the text, enriched with semantic tags, alongside with the knowledge graphs in a semantic graph database. Using these technologies a demo platform called "News On the Web (NOW)" has been developed, which offers browsing news, data linked with them or other news. NOW operates on a stream of about 10 000 news a month which it analyzes and links with a knowledge graph that includes DBPedia and Geonames.
+
+\section{Limitations of current search technologies}
+Searching information on the World Wide Web is an idea dating from its very beginning. Although based on the same technologies as general information retrieval, the web brings additional challenges such as how to scale efficiently and how to implement correct ranking in its ever changing environment. Different search engines return different search results due to the variation in indexing and search processing. Google, Yahoo and Bing handle queries after processing keywords. They only search recent information given on a web page. They are constantly improving and delivering more and more accurate results, but at the end they cannot answer you a question with an aggregated result and cannot suggest you search queries which are semantically interlinked based on concepts and not only on stems and other similar keywords. 
+
+The current web is the biggest global database that lacks the existence of a semantic structure and hence makes it difficult for a machine to understand the information provided by the user. This leads to formulating the two biggest challenges in web search: 
+
+\begin{itemize}
+    \item How can a search engine map a query to a document and retrieve meaningful information from it?
+    \item The query results produced by search engines are distributed across different documents that may be connected with hyperlinks. How does the search engine efficiently recognize such distributed results? 
+\end{itemize}
+The Semantic Web could solve the first problem by using semantic annotations to produce structured by meaning information. The second problem could be addressed by having graph-based query models. Such a goal poses challenges of its own in the areas of 
+knowledge representation, natural language processing and graph databases.
+
+\section{Why do we need more insight?}
+
+In today's world everything is information. The average connected consumer has access to an insane amount of it, thanks to the ubiquity of smartphone access to the web. From checking restaurant reviews and stock prices, to taking pictures of a new pair of jeans and asking the opinion of friends on Facebook, today's consumer is no longer restricted to choosing a brand through a push marketing approach. This change of direction in the purchase cycle has resulted in brands trying to better know the consumer in order to present him with the appropriate content for the purpose of advertising or just offering better customer experience. Although today buzzwords such as "Big Data" seem to be very trendy and loved by marketers the reality is that we need better insights, not more data. The data is out there and there is plenty of it easily accessible through the web. The biggest problem is that it is hard to reason about it in order to gain significant benefits. The grand vision of the Semantic Web wants to accomplish exactly that:
+\begin{itemize}
+    \item Enrich open data with its own semantics.
+    \item Interlink those semantics between different entities and facts.
+    \item Set a standardized way to access data, its semantics and other links leading to other related pieces of data.
+\end{itemize}
+When such knowledge is freely and easily available, a lot of cool applications become possible, e.g. content and user based recommendation systems become way more accurate if they can take advantage of user activity data and content metadata being in a unified data model and interlinked one another to find interesting patterns of user preferences towards particular content. Search becomes smarter because it indexes contextual information, rather than only keywords, and can infer related concepts. This could be extremely helpful when dealing with, e.g. news data (relating people, organisations, locations, etc.) or life sciences data (relating drugs, diseases, treatments, symptoms, etc.). To even further boost the benefits of such enriched data, machine learning techniques could be applied to train models on top of core data semantics and relations in order to predict behaviour even more accurate than when only using raw data and manually choosing and structuring its features to train upon. 
+
+Getting more insight about the world around us and the information we produce every single day plays a huge role in our modern lives and will continue to be even more important in the future.
+
+
+% \cite{ellis:bulldog,pet87,coutant:precision-compilers}.  
+% \ref{ch1:opts}.
+% \footnote{A description of
+% the floating point format used is shown in figures~\ref{exponent-format}
+%\ref{mantissa-format}.}.
+
+
+
+
