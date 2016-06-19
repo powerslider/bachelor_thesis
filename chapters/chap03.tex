@@ -1,8 +1,11 @@
 \chapter{Smart processing of news}
-\section{Named Entity Recognition}
-\section{News Data in RDF}
+\section{Concept Extraction}
+The first processing step of our whole pipeline is the extraction of relevant entities from free text, in this case news articles, and finding relationships between them. Entities are called those phrases in text that usually carry most of the meaning of a piece of information. They are divided into categories/classes of real world things, e.g. people, organisations etc.. When examining the context of the article being processed, different entities could be interlinked based on it. Those are the relationships between them which add significant information value to the discovered metadata. 
+
+The \textit{Ontotext Concept Extraction Pipeline} is a tool for automated analysis of large volumes of textual content, through which mentions of specific concepts and relationships between them can be discovered and represented in a machine-processable format. It enriches the content aggregated from various news sources based on data from DBpedia, WikiData, GeoNames and others. The pipeline utilizes a wide variety of linguistic and algorithmic resources – such as semantic gazetteers, rules triggered by particular linguistic patterns, various statistical models for classification and sequence tagging trained against human-annotated corpora, etc.. These resources are chained together in a sequence (hence the name pipeline) that provides content enrichment of gradually increasing complexity, where each phase builds upon the results produced by the one that precedes it. The concept extraction pipeline recognises mentions of entities such as Person, Organisation, and Location, and links them if possible to a particular Knowledge Base (DBpedia, WikiData, GeoNames etc.). It also tags the particularly relevant noun phrases, called key phrases thus allowing a fast grasp into the topic of the document. Furthermore it detects relationships between the extracted entities, as well as their relevance and confidence to the text. Due to the fact that text mining and natural language processing techniques are outside the scope of this thesis, we will not examine in more details the workflow of this processing step.
+
 \section{Data Preparation}
-After processing some raw news data to discover relevant mentions and converting them to RDF, the next step is to interlink NOW RDF data with other data sets that will give more information about those mentioned entities. For this purpose the following mappings and data sets are used:
+After processing some raw news data to discover relevant mentions and converting them to RDF, the next step is to interlink NOW RDF data with other data sets that will give more information about those mentioned entities. For this purpose the following mappings and data sets are used: 
 \begin{itemize}
     \item DBPedia
     \item GeoNames
@@ -238,3 +241,5 @@ Due to all of the news map queries targeting popularity,  a metric will be neede
 \textbf{Context indices} are another optimization that could be utilised, so they will be enabled. There are two types of context indices used to speed up query evaluation when searching statements via their context identifier. These indices are the PCSO (Predicate-Context-Subject-Object) and the PCOS (Predicate-Context-Object-Subject) and they are switched on together.
 
 Finally the \textbf{Lucene Connector} will be used on some key entities from DBPedia and GeoNames and also on news data as a separate index - title, content, creation dates, etc. The Connectors provide synchronisation at the entity level, where an entity is defined as having a unique identifier (a URI) and a set of properties and property values. In terms of RDF, this corresponds to a set of triples that have the same subject. In addition to simple properties (defined by a single triple), the Connectors support property chains. A property chain is defined as a sequence of triples where each triple’s object is the subject of the following triple.
+
+\section{SPARQL Querying}
