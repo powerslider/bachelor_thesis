@@ -1,4 +1,5 @@
 \chapter{Background}
+\label{chap:background}
 \section{The World Wide Web}
 The World Wide Web is the greatest repository of information ever assembled by
 man. It contains knowledge in the form of documents and multimedia resources concerning almost every area or subject regarding our lives. All this data is freely accessible to anyone with an Internet connection. It’s success is largely due to its decentralized design and nature. Web pages are hosted by different computers and each document can point to other documents independent of where the other document is physically located. As a result everybody all over the world can publish content on the web, allowing it to grow exponentially as more and more people learn how to use it.
@@ -129,11 +130,8 @@ represents a property or attribute of the object. Slots can have one or more val
 more structured than semantic networks. However, it has been shown that frame systems are similar to semantic networks. Famous KR languages based on frame systems are KRL and KL-ONE (based on description logic). 
 
 \subsection{Ontologies}
+In order for information from different sources to be integrated, there needs to be a shared understanding of the relevant domain. Knowledge representation formalisms provide structures for organizing this knowledge, but provide no mechanisms for sharing it. Ontologies provide a common vocabulary to support the sharing and reuse of knowledge. Although there is no universally accepted definition, the main thread of ontology in the philosophical sense is the study of entities and their relationships. The question an ontology asks is: \textit{What kinds of things exist or can exist in the world, and what manner of relations can those things have to each other?}. On the Semantic Web ontologies define the concepts and relationships (also referred to as “terms”) used to describe and represent an area of concern. They are used to classify the terms that can be used in a particular application, characterize possible relationships, and define possible constraints on using those terms. An example is to use ontologies to organize knowledge. Libraries, museums, newspapers, government portals, enterprises can now use ontologies modelling their knowledge domain by using standard formalisms which aid in sharing (data integration) and leveraging the power of other interlinked open data.
 
-
-\section{Databases}
-\subsection{Distributed Databases}
-\subsection{Graph Databases}
 \section{Semantic Web}
 The Semantic Web reveals the next generation in the development of the Internet. It enables interconnectedness of data from one source to another and the representation of this data in a machine readable form. This way computers can understand the information and can process ever more demanding tasks. The Semantic Web consists of a stack of standards and best practices for sharing data and its semantics across the Internet in order to be used by applications. Heavily backed up by the W3C the Semantic Web is also built using the same type of standards such as, e.g. HTML and CSS. These standards are: the RDF data model, the SPARQL query language, the RDFS and OWL standards for vocabularies and ontologies. A product could be created with built-in semantics but if it does not adhere to these standards it cannot be part of the Semantic Web. 
 
@@ -143,7 +141,7 @@ The Resource Description Framework (RDF) is the result of the work of the W3 Con
     \includegraphics[width=\linewidth]{rdf-triple-example}
     \caption{RDF Triple Scheme}
     \label{fig:view}
-\end{figure*}
+\end{figure}
 
 A \textit{resource} is something that is uniquely identified and can express something about it. \textit{Subjects} und \textit{predicates} are always resources and an \textit{object} could either be a resource or a \textit{literal}. Literals could be strings or other datatypes (numbers, dates, etc.).
 
@@ -273,5 +271,3 @@ In an open environment like the Web, different information providers publish dat
 identify an entity. URI aliases also provide an important social function to the Web of Data
 as they are dereferenced to different descriptions of the same entity and allow different views and opinions to be expressed. In order to still be able to track these diverse opinions, it is a common
 practice that data providers set \verb|owl:sameAs| links to all URI aliases they know about.
-
-\subsection{Linked Data Applications}

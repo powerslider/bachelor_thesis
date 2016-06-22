@@ -1,19 +1,22 @@
 \chapter{Smart processing of news}
+\label{chap:news-pipeline}
+This chapter will present the whole news processing pipeline from raw text data to interlinked RDF with other Linked Open Data data sets. The steps will include extraction of relevant entities and relationships between them, conversion to RDF, a data preparation step that includes data cleanup and interlinking with other public RDF data sets. Finally everything will be imported in an Ontotext GraphDB\textsuperscript{TM} triplestore repository where interesting aggregating SPARQL queries will be executed against the imported metadata to find trends of popularity.
+
 \section{Concept Extraction}
-The first processing step of our whole pipeline is the extraction of relevant entities from free text, in this case news articles, and finding relationships between them. Entities are called those phrases in text that usually carry most of the meaning of a piece of information. They are divided into categories/classes of real world things, e.g. people, organisations etc.. When examining the context of the article being processed, different entities could be interlinked based on it. Those are the relationships between them which add significant information value to the discovered metadata. 
+The first processing step of our whole pipeline is the extraction of relevant entities from free text, in this case news articles, and finding relationships between them. Entities are called those phrases in text that usually carry most of the meaning in a piece of information. They are divided into categories/classes of real world things, e.g. people, organisations etc.. When examining the context of the article being processed, different entities could be interlinked based on it. Those are the relationships between them which add significant information value to the discovered metadata. 
 
 The \textit{Ontotext Concept Extraction Pipeline} is a tool for automated analysis of large volumes of textual content, through which mentions of specific concepts and relationships between them can be discovered and represented in a machine-processable format. It enriches the content aggregated from various news sources based on data from DBpedia, WikiData, GeoNames and others. The pipeline utilizes a wide variety of linguistic and algorithmic resources – such as semantic gazetteers, rules triggered by particular linguistic patterns, various statistical models for classification and sequence tagging trained against human-annotated corpora, etc.. These resources are chained together in a sequence (hence the name pipeline) that provides content enrichment of gradually increasing complexity, where each phase builds upon the results produced by the one that precedes it. The concept extraction pipeline recognises mentions of entities such as Person, Organisation, and Location, and links them if possible to a particular Knowledge Base (DBpedia, WikiData, GeoNames etc.). It also tags the particularly relevant noun phrases, called key phrases thus allowing a fast grasp into the topic of the document. Furthermore it detects relationships between the extracted entities, as well as their relevance and confidence to the text. Due to the fact that text mining and natural language processing techniques are outside the scope of this thesis, we will not examine in more details the workflow of this processing step.
 
-\section{Data Preparation}
+\section{RDF Data Preparation}
 After processing some raw news data to discover relevant mentions and converting them to RDF, the next step is to interlink NOW RDF data with other data sets that will give more information about those mentioned entities. For this purpose the following mappings and data sets are used: 
 \begin{itemize}
     \item DBPedia
     \item GeoNames
-    \item SameAs statements between DBPedia and Geonames
+    \item \verb|sameAs| statements between DBPedia and Geonames
     \item NOW RDF news data
-    \item Panama Leaks in RDF
 \end{itemize}
 
+\subsection{Data Cleanup}
 In order to make everything work correctly some data cleanup is required and some additional mappings have to be introduced:
 \begin{enumerate}
     \item \subsubsection {Delete dbo:subsidiary misuse linking company to country or town}
@@ -242,4 +245,20 @@ Due to all of the news map queries targeting popularity,  a metric will be neede
 
 Finally the \textbf{Lucene Connector} will be used on some key entities from DBPedia and GeoNames and also on news data as a separate index - title, content, creation dates, etc. The Connectors provide synchronisation at the entity level, where an entity is defined as having a unique identifier (a URI) and a set of properties and property values. In terms of RDF, this corresponds to a set of triples that have the same subject. In addition to simple properties (defined by a single triple), the Connectors support property chains. A property chain is defined as a sequence of triples where each triple’s object is the subject of the following triple.
 
-\section{SPARQL Querying}
+\subsection{FactForge News}
+Ontotext has an old free service called \textit{FactForge}, found at \texttt{http://factforge.com}, which is something like a search engine for RDF data. It allows you to write SPARQL queries against these huge amounts of RDF data, e.g. you could ask \textit{"Which are all the airports that in 50km of range of my location?"}. It is basically a triplestore repository with imported and interlinked data sets like GeoNames, DBPedia, etc. and some custom mappings. The setup that has been described so far with our news data in this chapter resembles almost the same thing and eventually it will become exactly that. This huge repository filled with news and popular LOD data sets using the newest version of GraphDB\textsuperscript{TM} and a way more feature-rich and refined Workbench as the user interface, will replace the old FactForge service. It is now called \textit{FactForge News} due to the added news data that was missing in the old one. The next two figures give a small overview of the RDF classes and RDF domain and range relationships of a particular class:
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\linewidth]{ff-news-hierarchy}
+    \caption{Fact Forge News RDF class hierarchy diagram}
+    \label{fig:ff-news-hierarchy}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\linewidth]{domain-range-graph-agent}
+    \caption{Fact Forge News Agent RDF class domain-range graph diagram}
+    \label{fig:domain-range-graph-agent}
+\end{figure}
+The \textit{Semantic News Map} application presented in \textit{Chapter \ref{chap:semnews-app}} will use \textit{FactForge News} as a data repository. 
