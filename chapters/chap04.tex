@@ -1,15 +1,16 @@
 \chapter{Semantic News Map Application}
 \label{chap:semnews-app}
 
+\section{Overview}
 This chapter will present the end user web application which will visualise the already processed news in various interesting ways. Its goal is to allow you to "read" news in an entirely different way. Usually in articles and almost any other forms of text, the relevant and important information consists in probably less than half the whole text. Harnessing the power of semantics as described in \textit{Chapter \ref{chap:news-pipeline}} with presenting a whole processing pipeline for extracting meaningful information from news data, we now possess an extremely powerful asset extracted in an automated way. The next step is how to present this powerful asset to the user in a unique, effective and interesting way. 
 
-\section{Main Functionalities}
+\subsection{Main Functionalities}
 The \textit{Semantic News Map} application consists of a set of visualisations that present the relevant content of a news article or a group of news articles by doing aggregations on the already extracted metadata through SPARQL queries against a GraphDB\textsuperscript{TM} repository with all needed data imported. There are two main types of visualisations: 
 \begin{itemize}
     \item Word Cloud
     \item Geographic Heat Map
 \end{itemize}
-The are a few different versions of word clouds that present data based on different criteria:
+There are a few different versions of word clouds that present data based on different criteria:
 \begin{enumerate}
     \item \textbf{Direct popularity} of the concepts based on mentions count in the news and degree of importance of these news.
     \item \textbf{Relative popularity} - where the popularity within the current day is normalized against the popularity within the last year.
@@ -21,14 +22,25 @@ The geographic heat map has two main functionalities:
     \item Colors all world countries with different degrees of color intensity according to a specified color scale, based on the number of news in which they are mentioned and displays the news count of each when hovering with the mouse over them.
     \item Presents the list of news mentioning a specific county in a side panel when clicking on it.
 \end{enumerate}
-\newpage
 
+The following figures will present some screenshots of the whole web application.
+\begin{figure*}[ht!]
+    \centering
+    \frame{\includegraphics[width=\linewidth]{search-dialog-close}}
+    \caption{News search dialog}
+    \label{fig:search-dialog-close}
+\end{figure*}
+\newpage
 \begin{figure*}[ht!]
     \centering
     \includegraphics[width=\linewidth]{search-dialog}
-    \caption{Hidden Champions criterion word cloud visualisation}
+    \caption{News search dialog popping in the middle of the screen}
     \label{fig:search-dialog}
 \end{figure*}
+
+The figures above show the news search dialog in closeup and as a position on the screen when it appears. To see the dialog you have to click the round plus button on the top-right corner of the screen. This dialog serves the purpose of gathering parameters for news aggregation. \textit{Figure  \ref{fig:search-dialog-close}} exposes the elements in close detail. On the top there is a text field with auto-completion to select a news category like Sports, Lifestyle, Business, etc.. Beneath it is a date picker field to choose to aggregate news only published on the selected date. The \textit{"Relative popularity"} checkbox calculates relative popularity of the entities according to their popularity in the last year as was explained earlier. Finally there is a \textit{"Show"} button which sends a request to the backend with the selected parameters and all types of visualisations start loading.
+
+\newpage
 
 \begin{figure}[h!]
     \centering
@@ -40,9 +52,17 @@ The geographic heat map has two main functionalities:
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\linewidth]{geoheat-map}
-    \caption{Geographic heat map}
+    \caption{News frequency geographic world heat map}
     \label{fig:geoheat-map}
 \end{figure}
+
+Figures \textit{\ref{fig:word-cloud-hidden-champions} and \ref{fig:geoheat-map}} show how a word cloud and a geographic world heat map look like. In order to switch between visualisations you just have to click the tabs below which have labels showing what to expect. There are 4 tabs available: three word clouds and one geographic heat map. They are labelled as:
+\begin{enumerate}
+    \item \textbf{MOST POPULAR} - word cloud diagram, showing direct popularity.
+    \item \textbf{MOST POPULAR + HIDDEN} - word cloud diagram as the previous, but showing the related entities of the popular ones.
+    \item \textbf{HIDDEN CHAMPIONS} - word cloud diagram showing only related entities to the popular ones.
+    \item \textbf{GEO HEAT MAP} - geographic heat map diagram, showing frequency of news mentioning a specific country.
+\end{enumerate}
 
 \begin{figure}[h!]
     \centering
@@ -50,6 +70,26 @@ The geographic heat map has two main functionalities:
     \caption{News mentioning USA and heat map zoomed on USA}
     \label{fig:zoomed-geoheat-map}
 \end{figure}
+
+\textit{Figure \ref{fig:zoomed-geoheat-map}} shows what happens when you click on a country. The screen zooms to that country and a side panel on the right side pops up showing the name of the country, the news count of news mentioning it and a list of the news articles themselves with links leading to the Ontotext NOW web application (\textit{Figure \ref{fig:now-news-example}}) for reading them. The news article displayed there has highlighted words which when you hover on, a tooltip pops up showing the type of entity discovered, its relevance and confidence scores. In this case when you hover over \texttt{"Volkswagen"}, you see it is recognized as an \texttt{Organisation} with a relevance score of 72.9\% and a confidence score of 92.8\%.
+
+\newpage
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\linewidth]{now-news-example}
+    \caption{NOW news article from Science and Technology category}
+    \label{fig:now-news-example}
+\end{figure}
+
+The last two screenshots (\textit{Figures \ref{fig:news-mentioning-entity} and \ref{fig:news-mentioning-related-entities}}) show the details views that show up when you click on an entity from a word cloud. This view is presented again in a tabbed user interface with two tabs:
+\begin{enumerate}
+    \item \textbf{NEWS MENTIONING ENTITY}
+    \item \textbf{NEWS MENTIONING RELATED ENTITIES}
+\end{enumerate}
+Both views display a table of SPARQL results for things like: news title, news date, news link, relevance score and related entities details for the \textit{NEWS MENTIONING RELATED ENTITIES} results. These results also could be searched in the upper right search field.
+
+\newpage
 
 \begin{figure}[h!]
     \centering
@@ -65,15 +105,13 @@ The geographic heat map has two main functionalities:
     \label{fig:news-mentioning-related-entities}
 \end{figure}
 
-
-
-\section{Architecture and used technologies}
+\subsection{Architecture and used technologies}
 The whole application is based on a classic \verb|Client-Server| architecture. There is a backend part and a frontend part. The entire project is managed by \verb|Apache Maven| - a build system for compiling, packaging and dependency management of Java-based projects. It uses the standard Maven project archetype and contains two modules:
 \begin{verbatim}
     semantic-news-server
     semantic-news-ui
 \end{verbatim}
-The first is the backend module which contains only \verb|Java 8| code, connects to the FF-News GraphDB\textsuperscript{TM} repository and executes the news aggregation SPARQL queries which will feed the frontend of the application with data. And the second module is the frontend module which only contains \verb|Javascript|, \verb|HTML| and \verb|CSS| code but its build lifecycle is again managed by Maven.
+The first is the backend module which contains only \verb|Java 8| code, connects to the FactForge News GraphDB\textsuperscript{TM} repository and executes the news aggregation SPARQL queries which will feed the frontend of the application with data. And the second module is the frontend module which only contains \verb|Javascript|, \verb|HTML| and \verb|CSS| code but its build lifecycle is again managed by Maven.
 
 Communication between both modules is accomplished via REST (Representational State Transfer) in order to assure total decoupling of both components so that they can be easily modified without affecting each other. A simple example could be the frontend making a HTTP request to:\\
 \texttt{http://<url-host>/rest/semnews/news-mentioning-country?\\countryCode=USA\&from=2016-04-12}\\ and the backend sending a response containing the results from the execution of the SPARQL query about news titles and URLs of news from 12.April 2016, mentioning the United States in JSON format which the frontend can easily read and handle. 

@@ -1,13 +1,14 @@
 \chapter{Smart processing of news}
 \label{chap:news-pipeline}
+\section{Semantic News Pipeline}
 This chapter will present the whole news processing pipeline from raw text data to interlinked RDF with other Linked Open Data data sets. The steps will include extraction of relevant entities and relationships between them, conversion to RDF, a data preparation step that includes data cleanup and interlinking with other public RDF data sets. Finally everything will be imported in an Ontotext GraphDB\textsuperscript{TM} triplestore repository where interesting aggregating SPARQL queries will be executed against the imported metadata to find trends of popularity.
 
-\section{Concept Extraction}
+\subsection{Concept Extraction}
 The first processing step of our whole pipeline is the extraction of relevant entities from free text, in this case news articles, and finding relationships between them. Entities are called those phrases in text that usually carry most of the meaning in a piece of information. They are divided into categories/classes of real world things, e.g. people, organisations etc.. When examining the context of the article being processed, different entities could be interlinked based on it. Those are the relationships between them which add significant information value to the discovered metadata. 
 
-The \textit{Ontotext Concept Extraction Pipeline} is a tool for automated analysis of large volumes of textual content, through which mentions of specific concepts and relationships between them can be discovered and represented in a machine-processable format. It enriches the content aggregated from various news sources based on data from DBpedia, WikiData, GeoNames and others. The pipeline utilizes a wide variety of linguistic and algorithmic resources – such as semantic gazetteers, rules triggered by particular linguistic patterns, various statistical models for classification and sequence tagging trained against human-annotated corpora, etc.. These resources are chained together in a sequence (hence the name pipeline) that provides content enrichment of gradually increasing complexity, where each phase builds upon the results produced by the one that precedes it. The concept extraction pipeline recognises mentions of entities such as Person, Organisation, and Location, and links them if possible to a particular Knowledge Base (DBpedia, WikiData, GeoNames etc.). It also tags the particularly relevant noun phrases, called key phrases thus allowing a fast grasp into the topic of the document. Furthermore it detects relationships between the extracted entities, as well as their relevance and confidence to the text. Due to the fact that text mining and natural language processing techniques are outside the scope of this thesis, we will not examine in more details the workflow of this processing step.
+The \textit{Ontotext Concept Extraction Pipeline} is a tool for automated analysis of large volumes of textual content, through which mentions of specific concepts and relationships between them can be discovered and represented in a machine-processable format. It enriches the content aggregated from various news sources based on data from DBpedia, WikiData, GeoNames and others. The pipeline utilizes a wide variety of linguistic and algorithmic resources – such as semantic gazetteers, rules triggered by particular linguistic patterns, various statistical models for classification and sequence tagging trained against human-annotated corpora, etc.. These resources are chained together in a sequence (hence the name pipeline) that provides content enrichment of gradually increasing complexity, where each phase builds upon the results produced by the one that precedes it. The concept extraction pipeline recognises mentions of entities such as Person, Organisation, and Location, and links them if possible to a particular Knowledge Base (DBpedia, WikiData, GeoNames etc.). It also tags the particularly relevant noun phrases, called key phrases thus allowing a fast grasp into the topic of the document. Furthermore it detects relationships between the extracted entities, as well as their relevance and confidence to the text. Due to the fact that text mining and natural language processing techniques are outside the scope of this thesis, we will not examine the workflow of this processing step in any more details.
 
-\section{RDF Data Preparation}
+\subsection{RDF Data Preparation}
 After processing some raw news data to discover relevant mentions and converting them to RDF, the next step is to interlink NOW RDF data with other data sets that will give more information about those mentioned entities. For this purpose the following mappings and data sets are used: 
 \begin{itemize}
     \item DBPedia
@@ -16,8 +17,14 @@ After processing some raw news data to discover relevant mentions and converting
     \item NOW RDF news data
 \end{itemize}
 
-\subsection{Data Cleanup}
-In order to make everything work correctly some data cleanup is required and some additional mappings have to be introduced:
+\subsubsection{FactForge News}
+Ontotext has an old free service called \textit{FactForge}, found at \texttt{http://factforge.net}, which is something like a search engine for RDF data. It allows you to write SPARQL queries against these huge amounts of data, e.g. you could ask \textit{"Which are all the airports that in 50km of range of my location?"}. It is basically a triplestore repository with imported and interlinked data sets like GeoNames, DBPedia, etc. and some custom mappings. The setup will resemble the setup that we will describe in this and later processing steps with our news data in this chapter. Eventually it will become the new FactForge service. It is now called \textit{FactForge News} due to the added news data that was missing in the old one. 
+
+\subsubsection{Data Cleanup}
+In order to make everything work correctly, some data cleanup is required and some additional mappings have to be introduced, which will be prefixed like this:
+\begin{verbatim}
+    PREFIX ff-map: <http://factforge.net/ff2016-mapping/>
+\end{verbatim}
 \begin{enumerate}
     \item \subsubsection {Delete dbo:subsidiary misuse linking company to country or town}
     
@@ -106,7 +113,7 @@ dbp:data & 4 \\
 dbo:division & 3 \\ [1ex]
 \hline
 \end{tabular}
-\caption{DBPedia diverse industry mapping properties for \textbf{dbr:Software} industry}
+\caption{DBPedia diverse industry mapping properties for dbr:Software industry}
 \label{table:1}
 \end{table}
 
@@ -135,7 +142,7 @@ SELECT COUNT (DISTINCT ?org)  {
         dbo:service|dbp:type|dbo:type dbr:Software
 }
 \end{verbatim}
-    First query yields 1100 companies and the second - 1418 which is almost a third more. To battle those inconsistencies a collective property \textbf{ff-map:industry} is introduced which should only be applied to real "industry" values. While it is correct to map \textbf{dbp:genre dbr:Software} to \textbf{ff-map:industry dbr:Software}, mapping \textbf{dbp:genre dbr:Drama} to \textbf{ff-map:industry dbr:Drama} will not be. We define an "industry" to be those values that have some \\ \textbf{ff-map:industryVariant} property:
+    First query yields 1100 companies and the second - 1418 which is almost a third more. To battle these inconsistencies a collective property \textbf{ff-map:industry} is introduced which should only be applied to real "industry" values. While it is correct to map \textbf{dbp:genre dbr:Software} to \textbf{ff-map:industry dbr:Software}, mapping \textbf{dbp:genre dbr:Drama} to \textbf{ff-map:industry dbr:Drama} will not be. We define an "industry" to be those values that have some \\ \textbf{ff-map:industryVariant} property:
 
 \begin{verbatim}
 PREFIX ff-map: <http://factforge.net/ff2016-mapping/>
@@ -207,10 +214,10 @@ ff-map:orgFoundationCountry rdfs:subPropertyOf ff-map:orgCountry .
 To fully integrate these new mappings a series of SPARQL Update queries have to be executed in a similar manner as previous mappings.
 
 \end{enumerate}
-\section{Triplestore persistance}
+\subsection{Triplestore persistance}
 The setup for persisting the data includes a triplestore. For this project Ontotext's \textit{GraphDB\textsuperscript{TM}} is used - one of the fastest and most scalable triplestores which provides real-time OWL inference. 
 
-\subsection{Ontotext GraphDB\textsuperscript{TM}}
+\subsubsection{Ontotext GraphDB\textsuperscript{TM}}
 Some of GraphDB's features include:
 
 \begin{itemize}
@@ -228,7 +235,7 @@ Some of GraphDB's features include:
         \end{itemize}
 \end{itemize}
 
-\subsection{Tuning GraphDB\textsuperscript{TM}}
+\subsubsection{Tuning GraphDB\textsuperscript{TM}}
 In order to optimize the speed and efficiency of our queries we have to pick which of GraphDB\textsuperscript{TM}'s features to use and how to tune them appropriately. 
 
 \textbf{Geospatial index} will be enabled because GeoNames is imported which contains 2-dimensional data from \textit{wgs84} ontology.
@@ -245,20 +252,71 @@ Due to all of the news map queries targeting popularity,  a metric will be neede
 
 Finally the \textbf{Lucene Connector} will be used on some key entities from DBPedia and GeoNames and also on news data as a separate index - title, content, creation dates, etc. The Connectors provide synchronisation at the entity level, where an entity is defined as having a unique identifier (a URI) and a set of properties and property values. In terms of RDF, this corresponds to a set of triples that have the same subject. In addition to simple properties (defined by a single triple), the Connectors support property chains. A property chain is defined as a sequence of triples where each triple’s object is the subject of the following triple.
 
-\subsection{FactForge News}
-Ontotext has an old free service called \textit{FactForge}, found at \texttt{http://factforge.com}, which is something like a search engine for RDF data. It allows you to write SPARQL queries against these huge amounts of RDF data, e.g. you could ask \textit{"Which are all the airports that in 50km of range of my location?"}. It is basically a triplestore repository with imported and interlinked data sets like GeoNames, DBPedia, etc. and some custom mappings. The setup that has been described so far with our news data in this chapter resembles almost the same thing and eventually it will become exactly that. This huge repository filled with news and popular LOD data sets using the newest version of GraphDB\textsuperscript{TM} and a way more feature-rich and refined Workbench as the user interface, will replace the old FactForge service. It is now called \textit{FactForge News} due to the added news data that was missing in the old one. The next two figures give a small overview of the RDF classes and RDF domain and range relationships of a particular class:
+\subsection{RDF Data Visualization}
+After finally importing and interlinking the data, the next step is to write the news aggregation SPARQL queries. This section aims to present some of the cool data analytics features of GraphDB\textsuperscript{TM} Workbench which will help us to better know our data and to more easily write the SPARQL queries. The next three figures present some of the data visualisation diagrams available in the Workbench to give an in-depth overview of the imported data:
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\linewidth]{ff-news-hierarchy}
-    \caption{Fact Forge News RDF class hierarchy diagram}
+    \caption{RDF Class Hierarchy diagram overview}
     \label{fig:ff-news-hierarchy}
 \end{figure}
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\linewidth]{domain-range-graph-agent}
-    \caption{Fact Forge News Agent RDF class domain-range graph diagram}
+    \includegraphics[width=\linewidth]{zoomed-ff-news-hierarchy}
+    \caption{RDF Class Hierarchy diagram zoomed on dbo:Agent class}
+    \label{fig:zoomed-ff-news-hierarchy}
+\end{figure}
+\vspace{1cm}
+\textit{Figure \ref{fig:ff-news-hierarchy}} shows the RDF class hierarchy of our complete data set in the form of a circle packing diagram. There are three types of circles depicting RDF classes:
+\begin{itemize}
+    \item \textit{Top level parents} - circles with children and without parents.
+    \item \textit{Parents} - circles with children and with parents.
+    \item \textit{Children} - circles without other children but with/without parents.
+\end{itemize}
+Our data set contains over 1400 RDF classes, which is quite a lot. There are classes from DBPedia, GeoNames, NOW News data, etc., all interlinked with each other where it makes sense. This is why visualisation tools could be very helpful to get a better idea of the current schema of your data because it  changes very dynamically in time when new data or ontologies are being added.
+
+As an obvious example we see on the diagram that \texttt{dbo:Agent} is a top level parent but its child labels are not visible. The next picture (\textit{Figure\ref{fig:zoomed-ff-news-hierarchy}}) shows exactly them. They become visible after clicking on the circle with \texttt{dbo:Agent} label which zooms to it and shows their labels which are \texttt{schema:Person} and \texttt{schema:Organization} and hides the parent's label. Zooming can be continued further until a child class is reached.
+
+\textit{Figure \ref{fig:domain-range-graph-agent}} presents another type of data visualisation called the \textit{Domain-Range} graph. In RDF terminology \textit{domain} and \textit{range} properties are intended to give you insight about the way the predicate links a subject to an object. In the case of the domain property, when you link a subject to an object using a property with this associated attribute, then the subject qualifies as a type of thing specified in the domain. Range property works exactly like the domain, but it applies to the object of the statement and not the subject, e.g.:
+\begin{verbatim}
+    "Mother"(domain) hasChild "Child"(range)
+\end{verbatim}
+A more complex example is the child-parent relationship:
+ \begin{verbatim}
+     "Child" (domain) hasParent "Mother","Father" (range)
+ \end{verbatim}
+Here there are two parents (objects), which are pointed by the child (subject). On the current picture the class \texttt{dbo:Agent} is selected and all of its ingoing and outgoing predicates could be examined for domain and range based on the classes to which they are connected either as subjects or objects. This helps to trace relationships easier and also do some form of graph navigation because a double click on some of the green nodes selects that node and rerenders the diagram with its ingoing and outgoing properties.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=14cm]{domain-range-graph-agent}
+    \caption{RDF class dbo:Agent domain-range graph diagram}
     \label{fig:domain-range-graph-agent}
 \end{figure}
-The \textit{Semantic News Map} application presented in \textit{Chapter \ref{chap:semnews-app}} will use \textit{FactForge News} as a data repository. 
+
+The \textit{Semantic News Map} application presented in \textit{Chapter \ref{chap:semnews-app}} will use \texttt{FactForge News} as a remote data repository. 
+\subsection{News Aggregation SPARQL queries}
+This subsection will present some of the techniques for normalization used in the news aggregation SPARQL queries. There are two questions that have to be answered when examining entity popularity:
+\begin{itemize}
+    \item \textit{Which entities are relevant to the topic?}
+    \item \textit{How relevant to the topic they are?}
+\end{itemize}
+The NOW news data has the following URIs:
+\begin{verbatim}
+    PREFIX news-pub: <http://ontology.ontotext.com/publishing#>
+    PREFIX news: <http://ontology.ontotext.com/taxonomy/>
+\end{verbatim}
+There is a property called \texttt{news-pub:relevanceScore} whose value is generated from the concept extraction pipeline described in the first processing step. It measures the count of mentions of the entity in the news article plus its positioning in it, i.e the more the entity is placed at the beginning of the article the better the chance it could be part of a summary which automatically boosts its importance. \texttt{news:exactMatch} is a property which links mentioned entities in an article against external resources such as from DBPedia, e.g. \textit{"Volkswagen"} classified as \textit{Organisation} is matched against \texttt{dbo:Organisation} from DBPedia. There are also two very important additional mappings regarding relevance.The first one is \texttt{ff-map:agentRelation} which gives all related entities to the observed one by utilizing GraphDB\textsuperscript{TM}'s \textbf{RDF Rank} plugin which generates node weights based on interconnectedness to other nodes on the graph. This mechanism is called \textit{spreading activation}, i.e. a cognitive technique that starts with initiating weights or "activation" of source nodes and then iteratively propagating or "spreading" that activation out to other nodes linked to the them. This powerful mechanism will allow for tracing hidden relationships in our \textit{hidden champions} scenario. The second one is \texttt{ff-map:longtermPopularity} which takes into account mentions in the last year when evaluating current popularity.
+    
+By combining the above mechanisms we could now achieve the following scenarios:
+\begin{enumerate}
+    \item \textbf{Direct popularity} will be calculated through simply counting the number of mentions in the examined news articles and summing up with \\ \texttt{news-pub:relevanceScore}.
+    \item \textbf{Relative popularity} will take into account the formula: 
+\begin{verbatim}
+(daily popularity * daily popularity / longterm popularity) * 100
+\end{verbatim}
+    Daily popularity is the maximum \texttt{news-pub:relevanceScore} found and longterm popularity comes from matching against \texttt{ff-map:longtermPopularity}.
+    \item \textbf{Hidden champions} are matched against \texttt{ff-map:agentRelation} to trace their indirectly related connections, e.g. if "Sergey Brin" is mentioned in the article, he will be automatically related to "Google" and the result from the query will return "Google".
+\end{enumerate}
+Finally \texttt{news:exactMatch} is used everywhere because matched entities against, e.g. DBPedia or GeoNames usually have better descriptions and more information related to them.

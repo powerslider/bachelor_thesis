@@ -2,7 +2,14 @@
 %% If you want to create a bibliography file by hand, change the contents of
 %% this file to a `thebibliography' environment.  For more information 
 %% see section 4.3 of the LaTeX manual.
-\begin{singlespace}
+\begingroup
+\let\cleardoublepage\clearpage
+\cite{SWT}
+\cite{Brachman}
+\cite{FOL}
+\cite{DuCharme}
+\cite{Sauermann07}
+\cite{Shadbolt:2006:SWR:1155313.1155373}
 \bibliography{main}
 \bibliographystyle{plain}
-\end{singlespace}
+\endgroup
